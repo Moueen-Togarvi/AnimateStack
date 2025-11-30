@@ -52,5 +52,8 @@
 	},
 	"keywords": [
 		"svelte"
-	]
+	],
+	"dependencies": {
+		"monaco-editor": "^0.55.1"
+	}
 }
