@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Component, Category, Tag
+from .models import Component, Category, Tag, Asset
 from users.serializers import UserSerializer
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -44,8 +44,11 @@ class ComponentSerializer(serializers.ModelSerializer):
             return obj.likes.filter(id=request.user.id).exists()
         return False
 
-    def create(self, validated_data):
-        tags = validated_data.pop('tags', [])
-        component = Component.objects.create(**validated_data)
         component.tags.set(tags)
         return component
+
+class AssetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asset
+        fields = '__all__'
+        read_only_fields = ('uploaded_by',)

@@ -55,3 +55,18 @@ class Component(models.Model):
             from django.utils.text import slugify
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+class Asset(models.Model):
+    ASSET_TYPES = (
+        ('3d', '3D Model (GLTF/GLB)'),
+        ('image', 'Image'),
+        ('lottie', 'Lottie Animation'),
+    )
+
+    file = models.FileField(upload_to='assets/')
+    asset_type = models.CharField(max_length=10, choices=ASSET_TYPES, default='3d')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assets')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.asset_type} - {self.file.name}"

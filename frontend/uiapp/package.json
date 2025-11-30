@@ -48,12 +48,17 @@
 		"svelte-check": "^4.3.4",
 		"tailwindcss": "^4.1.17",
 		"typescript": "^5.9.3",
-		"vite": "^7.2.2"
+		"vite": "^7.2.2",
+		"vite-plugin-monaco-editor": "^1.1.0"
 	},
 	"keywords": [
 		"svelte"
 	],
 	"dependencies": {
-		"monaco-editor": "^0.55.1"
+		"@threlte/core": "^8.3.0",
+		"@threlte/extras": "^9.7.1",
+		"@types/three": "^0.181.0",
+		"monaco-editor": "^0.55.1",
+		"three": "^0.181.2"
 	}
 }
