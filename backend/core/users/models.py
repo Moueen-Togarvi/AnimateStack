@@ -7,6 +7,11 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     is_creator = models.BooleanField(default=False)
     
+    # Social Links
+    github_handle = models.CharField(max_length=50, blank=True)
+    twitter_handle = models.CharField(max_length=50, blank=True)
+    website = models.URLField(blank=True)
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

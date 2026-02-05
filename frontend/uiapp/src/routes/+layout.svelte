@@ -9,7 +9,7 @@
     });
 </script>
 
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+<div class="relative min-h-screen bg-[#101010] text-white font-sans selection:bg-indigo-500 selection:text-white">
     <Navbar />
     <main>
         <slot />

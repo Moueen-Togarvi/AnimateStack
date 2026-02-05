@@ -16,7 +16,7 @@ class ComponentSerializer(serializers.ModelSerializer):
     creator = UserSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(), source='category', write_only=True
+        queryset=Category.objects.all(), source='category', write_only=True, required=False, allow_null=True
     )
     tags = TagSerializer(many=True, read_only=True)
     tag_ids = serializers.PrimaryKeyRelatedField(

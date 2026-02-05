@@ -33,33 +33,79 @@ class GenerateComponentView(APIView):
             model = genai.GenerativeModel('gemini-2.0-flash')
             
             system_prompt = """
-            You are an expert frontend developer. Generate a Svelte component based on the user prompt. 
-            Return ONLY a valid JSON object with the following structure:
+            You are an expert frontend developer specializing in creating "Pro-level", award-winning UI components similar to those found on uiverse.io or aceternity.
+            
+            Your goal is to generate a Svelte component based on the user prompt.
+            
+            GUIDELINES:
+            1. **Design Quality**: The design MUST be modern, premium, and visually stunning. Use gradients, glassmorphism, subtle shadows, and smooth animations.
+            2. **Tech Stack**: Use HTML, CSS (TailwindCSS), and JavaScript.
+            3. **Responsiveness**: Ensure the component looks great on all sizes.
+            4. **Interactivity**: Add hover effects, transitions, and click animations. Make it feel "alive".
+            5. **No Placeholders**: Avoid using placeholder images (like via.placeholder.com) unless absolutely necessary. Use CSS-based graphics or patterns instead.
+            6. **Centering**: The component should be designed to look good when centered on the screen.
+            
+            OUTPUT FORMAT:
+            Return ONLY a raw JSON object with the following structure (no markdown code blocks):
             {
-                "title": "Component Title",
-                "description": "Brief description",
+                "title": "A creative title for the component",
+                "description": "A short description of what it does",
                 "code_content": {
-                    "html": "Svelte HTML/Template code here",
-                    "css": "CSS styles here (no <style> tags)",
-                    "js": "JavaScript logic here (no <script> tags)"
+                    "html": "The HTML structure (use Tailwind classes)",
+                    "css": "Custom CSS if needed (e.g., for keyframe animations not in Tailwind)",
+                    "js": "JavaScript logic (if any)"
                 }
             }
-            Do not include markdown formatting (```json ... ```). Just the raw JSON string.
             """
             
             full_prompt = f"{system_prompt}\n\nUser Prompt: {prompt}"
             
+            print(f"Generating for prompt: {prompt}")
             response = model.generate_content(full_prompt)
             
             import json
-            # Clean up potential markdown formatting if Gemini adds it
             content_str = response.text.strip()
+            print(f"Raw AI Response: {content_str}")
+            
+            # Clean up potential markdown formatting
             if content_str.startswith('```json'):
                 content_str = content_str[7:]
+            elif content_str.startswith('```'):
+                content_str = content_str[3:]
+            
             if content_str.endswith('```'):
                 content_str = content_str[:-3]
+            
+            content_str = content_str.strip()
                 
-            content = json.loads(content_str)
+            try:
+                content = json.loads(content_str)
+            except json.JSONDecodeError:
+                # Fallback: try to find JSON object if there's extra text
+                start = content_str.find('{')
+                end = content_str.rfind('}') + 1
+                if start != -1 and end != -1:
+                    content_str = content_str[start:end]
+                    content = json.loads(content_str)
+                else:
+                    raise
+
+            # Validate structure
+            if 'code_content' not in content:
+                # Attempt to fix structure if AI returned flat keys
+                if 'html' in content:
+                    content = {
+                        'title': content.get('title', 'Generated Component'),
+                        'description': content.get('description', 'AI Generated'),
+                        'code_content': {
+                            'html': content.get('html', ''),
+                            'css': content.get('css', ''),
+                            'js': content.get('js', '')
+                        }
+                    }
+                else:
+                    print("Invalid structure received")
+
             return Response(content)
 
         except Exception as e:
